@@ -8,17 +8,21 @@ import { AuthGuard } from './core/auth/auth.guard';
 import { TodoModule } from './features/todo/todo.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { TrackModule } from './features/tracks/tracks.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'better-sqlite3',
       database: 'music.db',
+      synchronize: true,
+      autoLoadEntities: true,
     }),
     EventEmitterModule.forRoot(),
     AuthModule,
     UsersModule,
     TodoModule,
+    TrackModule
   ],
   controllers: [AppController],
   providers: [

@@ -1,0 +1,15 @@
+info:
+  name: List tracks
+  type: http
+  seq: 2
+
+http:
+  method: GET
+  url: "{{url}}/tracks"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

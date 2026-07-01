@@ -11,6 +11,8 @@ import {
 import { UsersService } from '../services/users.service';
 import { User } from '../models/user.model';
 
+import { Public } from '../../auth/auth.decorator';
+
 @Controller('users')
 export class UserController {
   constructor(private readonly _service: UsersService) {}
@@ -21,6 +23,7 @@ export class UserController {
     return this._service.findAll();
   }
 
+  @Public()
   @HttpCode(HttpStatus.CREATED)
   @Post('')
   create(

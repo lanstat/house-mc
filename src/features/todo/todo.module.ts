@@ -13,8 +13,18 @@ import { TaskProvider } from './providers/task.provider';
 import { ProjectProvider } from './providers/project.provider';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ProjectEntity, TaskEntity]), UsersModule],
-  controllers: [TaskController, MeTodoController, ProjectController],
+  imports: [
+    TypeOrmModule.forFeature([
+      ProjectEntity,
+      TaskEntity,
+    ]),
+    UsersModule,
+  ],
+  controllers: [
+    TaskController,
+    MeTodoController,
+    ProjectController,
+  ],
   providers: [
     TaskService,
     ProjectService,
@@ -23,4 +33,5 @@ import { ProjectProvider } from './providers/project.provider';
     TaskProvider,
   ],
 })
-export class TodoModule {}
+export class TodoModule { }
+
