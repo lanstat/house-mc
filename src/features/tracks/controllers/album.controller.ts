@@ -17,23 +17,7 @@ export class AlbumController {
   constructor(
     private readonly _service: AlbumService,
     private readonly _artistService: ArtistService,
-  ) {}
-
-  @Post()
-  async create(
-    @Body('name') name: string,
-    @Body('artistId') artistId?: number,
-  ) {
-    const album = new Album();
-    album.name = name;
-    if (artistId) {
-      const artist = await this._artistService.findOne(artistId);
-      album.artist = artist;
-    } else {
-      album.artist = null;
-    }
-    return this._service.create(album);
-  }
+  ) { }
 
   @Get()
   findAll() {
@@ -49,25 +33,11 @@ export class AlbumController {
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body('name') name?: string,
-    @Body('artistId') artistId?: number,
   ) {
     const updateData: Partial<Album> = {};
     if (name !== undefined) {
       updateData.name = name;
     }
-    if (artistId !== undefined) {
-      if (artistId === null) {
-        updateData.artist = null;
-      } else {
-        const artist = await this._artistService.findOne(artistId);
-        updateData.artist = artist;
-      }
-    }
     return this._service.update(id, updateData);
-  }
-
-  @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this._service.remove(id);
   }
 }

@@ -12,7 +12,7 @@ export class TrackService {
     private readonly _provider: TrackProvider,
     private readonly _artistService: ArtistService,
     private readonly _albumService: AlbumService,
-  ) {}
+  ) { }
 
   create(record: Track): Promise<Track> {
     return this._provider.create(record);

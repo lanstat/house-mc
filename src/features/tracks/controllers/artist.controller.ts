@@ -14,14 +14,7 @@ import { plainToInstance } from 'class-transformer';
 
 @Controller('api/artists')
 export class ArtistController {
-  constructor(private readonly _service: ArtistService) {}
-
-  @Post()
-  create(@Body('name') name: string) {
-    const artist = new Artist();
-    artist.name = name;
-    return this._service.create(artist);
-  }
+  constructor(private readonly _service: ArtistService) { }
 
   @Get()
   findAll() {
@@ -39,10 +32,5 @@ export class ArtistController {
     @Body('name') name: string,
   ) {
     return this._service.update(id, { name });
-  }
-
-  @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this._service.remove(id);
   }
 }

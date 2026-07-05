@@ -11,12 +11,19 @@ import {
   UploadedFile,
   ParseIntPipe,
   BadRequestException,
+  Res,
+  StreamableFile,
+  HttpStatus,
+  Headers,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { TrackService } from '../services/track.service';
 import { ArtistService } from '../services/artist.service';
 import { AlbumService } from '../services/album.service';
 import { Track } from '../models/track.model';
+import { createReadStream, statSync } from 'fs';
+import { Public } from 'src/core/auth/auth.decorator';
+import type { Response } from 'express';
 
 @Controller('api/tracks')
 export class TrackController {
@@ -24,7 +31,7 @@ export class TrackController {
     private readonly _service: TrackService,
     private readonly _artistService: ArtistService,
     private readonly _albumService: AlbumService,
-  ) {}
+  ) { }
 
   @Post()
   @UseInterceptors(FileInterceptor('file'))
@@ -114,5 +121,55 @@ export class TrackController {
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this._service.remove(id);
+  }
+
+  @Public()
+  @Get(':id/stream')
+  async play(
+    @Param('id', ParseIntPipe) id: number,
+    @Headers('range') range: string,
+    @Res({ passthrough: true }) response: Response
+  ) {
+    let track = await this._service.findOne(id);
+    const filePath = track.filePath;
+
+    const { size } = statSync(filePath);
+
+    if (!range) {
+      response.set({
+        'Content-Type': 'audio/mpeg',
+        'Content-Length': size.toString(),
+        'Accept-Ranges': 'bytes'
+      })
+      const file = createReadStream(filePath);
+      return new StreamableFile(file);
+    }
+
+    const parts = range.replace(/bytes=/, '').split('-');
+    const start = parseInt(parts[0], 10);
+    // Si no especifican el final, leemos hasta el último byte disponible
+    const end = parts[1] ? parseInt(parts[1], 10) : size - 1;
+
+    // Validación de seguridad para no desbordar el archivo
+    if (start >= size || end >= size) {
+      response.status(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE).set({
+        'Content-Range': `bytes */${size}`,
+      });
+      return;
+    }
+
+    const chunkSize = end - start + 1;
+    const fileStream = createReadStream(filePath, { start, end });
+
+    // 4. Configurar las cabeceras para una respuesta parcial (HTTP 206)
+    response.status(HttpStatus.PARTIAL_CONTENT).set({
+      'Content-Range': `bytes ${start}-${end}/${size}`,
+      'Accept-Ranges': 'bytes',
+      'Content-Length': chunkSize.toString(),
+      'Content-Type': 'audio/mpeg',
+    });
+
+    // 5. Retornar el StreamableFile mapeado al rango de bytes solicitado
+    return new StreamableFile(fileStream);
   }
 }
