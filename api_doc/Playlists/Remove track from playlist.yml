@@ -1,0 +1,22 @@
+info:
+  name: Remove track from playlist
+  type: http
+  seq: 7
+
+http:
+  method: DELETE
+  url: "{{url}}/me/playlists/:id/tracks/:trackId"
+  params:
+    - name: id
+      value: "2"
+      type: path
+    - name: trackId
+      value: "1"
+      type: path
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
