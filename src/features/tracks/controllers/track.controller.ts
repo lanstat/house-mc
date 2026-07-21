@@ -128,7 +128,8 @@ export class TrackController {
   async play(
     @Param('id', ParseIntPipe) id: number,
     @Headers('range') range: string,
-    @Res({ passthrough: true }) response: Response
+    @Res({ passthrough: true }) response: Response,
+    @Query('token') token: string
   ) {
     let track = await this._service.findOne(id);
     const filePath = track.filePath;
