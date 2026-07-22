@@ -9,6 +9,9 @@ export class AlbumEntity {
   @Column()
   name: string;
 
+  @Column({ nullable: true })
+  coverPath: string;
+
   @ManyToOne(() => ArtistEntity, { onDelete: 'SET NULL', nullable: true })
   @JoinColumn({ name: 'artistId' })
   artist: ArtistEntity | null;

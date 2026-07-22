@@ -8,7 +8,7 @@ export class AlbumProvider {
   constructor(
     @InjectRepository(AlbumEntity)
     private readonly _repository: Repository<AlbumEntity>,
-  ) {}
+  ) { }
 
   async findAll(): Promise<Album[]> {
     const records = await this._repository.find({
@@ -37,6 +37,7 @@ export class AlbumProvider {
   }
 
   async create(record: Album): Promise<Album> {
+    console.log(record)
     const entity = instanceToPlain(record);
     const saved = await this._repository.save(entity);
     return plainToInstance(Album, saved);

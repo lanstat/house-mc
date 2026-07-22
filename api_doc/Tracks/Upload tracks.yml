@@ -12,7 +12,8 @@ http:
       - name: file
         type: file
         value:
-          - /home/lanstat/Downloads/01 - BENEE - Night Garden.mp3
+          - /home/lanstat/Music/Elley Duhé - MIDDLE OF THE NIGHT (Official Video)-oSHzUD-uqKY.mp3
+        contentType: audio/mpeg
   auth: inherit
 
 settings:

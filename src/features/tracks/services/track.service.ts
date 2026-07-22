@@ -54,6 +54,8 @@ export class TrackService {
     let artistName: string | null = null;
     let albumName: string | null = null;
     let duration: number | null = null;
+    let coverBuffer: Buffer | null = null;
+    let coverFormat: string | null = null;
 
     try {
       const { parseBuffer } = await import('music-metadata');
@@ -64,6 +66,12 @@ export class TrackService {
       artistName = metadata.common?.artist || null;
       albumName = metadata.common?.album || null;
       duration = metadata.format?.duration || null;
+
+      const picture = metadata.common.picture?.[0];
+      if (picture) {
+        coverBuffer = Buffer.from(picture.data);
+        coverFormat = picture.format || 'jpg';
+      }
     } catch (err) {
       console.warn('Failed to parse music metadata:', err);
     }
@@ -86,6 +94,19 @@ export class TrackService {
     const filename = `${Date.now()}-${file.originalname}`;
     const filePath = path.join(uploadsDir, filename);
     await fs.writeFile(filePath, file.buffer);
+
+    // Extract and save album cover if available
+    if (coverBuffer && album) {
+      const coversDir = path.join(uploadsDir, 'covers');
+      await fs.mkdir(coversDir, { recursive: true });
+      const coverExt = coverFormat === 'png' ? 'png' : 'jpg';
+      const coverFilename = `album-${album.id}.${coverExt}`;
+      const coverPath = path.join(coversDir, coverFilename);
+      await fs.writeFile(coverPath, coverBuffer);
+      album.coverPath = `covers/${coverFilename}`;
+
+      await this._albumService.update(album.id, album);
+    }
 
     // Persist Track
     const track = new Track();
