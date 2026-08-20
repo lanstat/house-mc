@@ -72,12 +72,14 @@ export class TrackController {
   }
 
   @Get()
+  @Public()
   findAll(
     @Query('title') title?: string,
     @Query('album') album?: string,
     @Query('artist') artist?: string,
+    @Query('q') query?: string,
   ) {
-    return this._service.findAll({ title, album, artist });
+    return this._service.findAll({ title, album, artist, q: query });
   }
 
   @Get(':id')

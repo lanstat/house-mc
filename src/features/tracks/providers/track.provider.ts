@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm';
+import { Repository, Brackets } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { TrackEntity } from '../entities/track.entity';
@@ -10,10 +10,20 @@ export class TrackProvider {
     private readonly _repository: Repository<TrackEntity>,
   ) {}
 
-  async findAll(filters?: { title?: string; album?: string; artist?: string }): Promise<Track[]> {
+  async findAll(filters?: { title?: string; album?: string; artist?: string; q?: string }): Promise<Track[]> {
     const query = this._repository.createQueryBuilder('track')
       .leftJoinAndSelect('track.artist', 'artist')
       .leftJoinAndSelect('track.album', 'album');
+
+    if (filters?.q) {
+      query.andWhere(
+        new Brackets(qb => {
+          qb.where('track.title LIKE :query', { query: `%${filters.q}%` })
+            .orWhere('artist.name LIKE :query', { query: `%${filters.q}%` })
+            .orWhere('album.name LIKE :query', { query: `%${filters.q}%` });
+        }),
+      );
+    }
 
     if (filters?.title) {
       query.andWhere('track.title LIKE :title', { title: `%${filters.title}%` });

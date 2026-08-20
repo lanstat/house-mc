@@ -18,7 +18,7 @@ export class TrackService {
     return this._provider.create(record);
   }
 
-  findAll(filters?: { title?: string; album?: string; artist?: string }): Promise<Track[]> {
+  findAll(filters?: { title?: string; album?: string; artist?: string; q?: string }): Promise<Track[]> {
     return this._provider.findAll(filters);
   }
 

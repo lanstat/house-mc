@@ -150,6 +150,39 @@ describe('Tracks, Albums, Artists, Playlists (e2e)', () => {
       expect(res.body[0].title).toBe('One More Time');
     });
 
+    it('should search tracks by track name via query parameter q', async () => {
+      const res = await request(app.getHttpServer())
+        .get('/api/tracks')
+        .set('Authorization', `Bearer ${tokenA}`)
+        .query({ q: 'One More' })
+        .expect(200);
+
+      expect(res.body.length).toBe(1);
+      expect(res.body[0].title).toBe('One More Time');
+    });
+
+    it('should search tracks by artist name via query parameter q', async () => {
+      const res = await request(app.getHttpServer())
+        .get('/api/tracks')
+        .set('Authorization', `Bearer ${tokenA}`)
+        .query({ q: 'Daft Punk' })
+        .expect(200);
+
+      expect(res.body.length).toBe(1);
+      expect(res.body[0].title).toBe('One More Time');
+    });
+
+    it('should search tracks by album name via query parameter q', async () => {
+      const res = await request(app.getHttpServer())
+        .get('/api/tracks')
+        .set('Authorization', `Bearer ${tokenA}`)
+        .query({ q: 'Discovery' })
+        .expect(200);
+
+      expect(res.body.length).toBe(1);
+      expect(res.body[0].title).toBe('One More Time');
+    });
+
     it('should upload a music file and save it (fallback metadata)', async () => {
       const dummyBuffer = Buffer.from('dummy mp3 file contents');
       const res = await request(app.getHttpServer())
