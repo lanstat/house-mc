@@ -8,12 +8,12 @@ export class PlaylistProvider {
   constructor(
     @InjectRepository(PlaylistEntity)
     private readonly _repository: Repository<PlaylistEntity>,
-  ) {}
+  ) { }
 
   async findAllByUser(userId: number): Promise<Playlist[]> {
     const records = await this._repository.find({
       where: { user: { id: userId } },
-      relations: { tracks: { artist: true, album: true } },
+      relations: { tracks: { artist: false, album: false } },
     });
     return plainToInstance(Playlist, records);
   }

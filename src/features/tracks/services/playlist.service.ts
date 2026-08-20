@@ -2,13 +2,14 @@ import { Injectable, ForbiddenException, NotFoundException } from '@nestjs/commo
 import { PlaylistProvider } from '../providers/playlist.provider';
 import { TrackProvider } from '../providers/track.provider';
 import { Playlist } from '../models/playlist.model';
+import { Track } from '../models/track.model';
 
 @Injectable()
 export class PlaylistService {
   constructor(
     private readonly _provider: PlaylistProvider,
     private readonly _trackProvider: TrackProvider,
-  ) {}
+  ) { }
 
   async create(name: string, userId: number): Promise<Playlist> {
     const playlist = new Playlist();
@@ -81,5 +82,18 @@ export class PlaylistService {
 
     playlistEntity.tracks = playlistEntity.tracks.filter(t => t.id !== trackId);
     return this._provider.saveEntity(playlistEntity);
+  }
+
+  async getTracks(id: number, userId: number,): Promise<Track[]> {
+    const playlistEntity = await this._provider.findEntity(id);
+    if (!playlistEntity) {
+      throw new NotFoundException(`Playlist with ID ${id} not found`);
+    }
+    if (playlistEntity.user.id !== userId) {
+      throw new ForbiddenException('You do not own this playlist');
+    }
+
+    const playlist = await this._provider.findOne(id);
+    return playlist!.tracks;
   }
 }

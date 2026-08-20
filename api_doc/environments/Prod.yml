@@ -1,0 +1,8 @@
+name: Prod
+variables:
+  - name: url
+    value: http://192.168.0.30:3000/api
+  - name: username
+    value: lanstat
+  - name: password
+    value: feanylat17

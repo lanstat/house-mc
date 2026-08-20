@@ -21,7 +21,7 @@ interface RequestWithUser extends ExpressRequest {
 
 @Controller('api/me/playlists')
 export class PlaylistController {
-  constructor(private readonly _service: PlaylistService) {}
+  constructor(private readonly _service: PlaylistService) { }
 
   @Post()
   create(
@@ -64,6 +64,15 @@ export class PlaylistController {
   ) {
     const userId = req.user.sub;
     return this._service.remove(id, userId);
+  }
+
+  @Get(':id/tracks')
+  getTracks(
+    @Param('id', ParseIntPipe) id: number,
+    @Request() req: RequestWithUser,
+  ) {
+    const userId = req.user.sub;
+    return this._service.getTracks(id, userId);
   }
 
   @Post(':id/tracks')

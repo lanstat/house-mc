@@ -6,3 +6,7 @@ variables:
     value: lanstat
   - name: password
     value: feanylat17
+  - name: token
+    value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoibGFuc3RhdCIsImlhdCI6MTc4NjE4MzA5NiwiZXhwIjoxNzg2MTg2Njk2fQ.NkYlcs54o0Tx9RMUETwJXQDir_BGUH89eVXaKqVMxRg
+  - name: staticUrl
+    value: http://localhost:3000/uploads
